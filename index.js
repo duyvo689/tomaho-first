@@ -1,12 +1,13 @@
 const express = require('express')
 const app = express()
-const port = 3000
 const path = require('path')
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/index.html'))
+    res.sendFile(path.join(__dirname, 'views/form.html'))
 })
 
+
+const port = 3000;
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`App listening on port ${port}`)
 })
