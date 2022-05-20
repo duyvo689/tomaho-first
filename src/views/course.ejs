@@ -1,0 +1,47 @@
+<%- include('./header')-%>
+
+    <h2 style="text-align: center;" class="mt-5">List course</h2>
+
+    <table class="table table-success table-striped container mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Img</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(var i=0; i < course.length; i++) {%>
+                <tr>
+                    <th scope="row">
+                        <%= course[i].name %>
+                    </th>
+                    <td colspan="1">
+                        <%= course[i].description %>
+                    </td>
+                    <td>img</td>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+    <script>
+                // const update = document.querySelector('#update-button')
+                // const data = {
+                //     name: 'Toan',
+                //     description: 'Hoc toan luyen tu duy.'
+                // }
+                // update.addEventListener('click', _ => {
+                //     fetch('/course', {
+                //         method: 'put',
+                //         headers: { 'Content-Type': 'application/json' },
+                //         body: JSON.stringify(data)
+                //     })
+                //         .then(response => response.json())
+                //         .then(data => {
+                //             console.log('Success:', data);
+                //         })
+                //         .catch((error) => {
+                //             console.error('Error:', error);
+                //         });
+                // })
+    </script>
