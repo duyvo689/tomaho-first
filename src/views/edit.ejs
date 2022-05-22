@@ -1,0 +1,11 @@
+<body>
+    <%id=course._id%>
+        <form method="post" action="/courses/<%=id%>?_method=put">
+            <h2>Form update</h2>
+            <label for="">Name</label>
+            <input value=" <%=course.name%>" type="text" name="name">
+            <label for="">Description</label>
+            <input value=" <%=course.description%>" type="text" name="description">
+            <button type="submit" id="">Submit</button>
+        </form>
+</body>
