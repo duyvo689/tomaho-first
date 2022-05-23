@@ -4,26 +4,46 @@ const path = require('path')
 const morgan = require('morgan')
 const MongoClient = require('mongodb').MongoClient
 const objectId = require('mongodb').ObjectId
-const bodyParser = require('body-parser')
-const course = require('./src/models/courses')
-const { ObjectId } = require('mongodb')
+const product = require('./src/models/product')
 const router = require('./src/route/web')
 const methodOverride = require('method-override')
+const sortMiddlewares = require('./src/middlewares/sortMiddlewares')
 
 
 app.set('views', path.join(__dirname, 'src/views'))
 app.set("view engine", "ejs");
 app.use(morgan('combined'));
 app.use(express.static('public'));
-app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use('/public', express.static('public'))
+app.use(sortMiddlewares)
 // app.use('/', router)
 
 
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'views/form.html'))
-// })
+//funtion helper engine
+//column type sort
+app.locals.sortable = (field, sort) => {
+    const sortType = field === sort.column ? sort.type : 'default'
+
+    const icons = {
+        default: 'oi oi-elevator',
+        asc: 'oi oi-sort-ascending',
+        desc: 'oi oi-sort-descending',
+    };
+    const types = {
+        default: 'desc',
+        asc: 'desc',
+        desc: 'asc',
+    };
+    const icon = icons[sortType]
+    const type = types[sortType]
+    return `<a href="/products/sort?_sort&column=${field}&type=${type}">
+    <span class="${icon}"></span>
+    </a>`
+}
+
 app.get('/', (req, res) => {
     res.render('header')
 })
@@ -32,69 +52,84 @@ app.get('/creates', (req, res) => {
     res.render('create.ejs')
 })
 
-// app.get('/update', (req, res) => {
-//     res.render('update.ejs')
-//     console.log('>>>>>>>>>>>>>>>>>.', req.params)
-//     res.send(req.params)
-// })
-
-
-
-
 const port = 3000;
 
 MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
     .then(client => {
         console.log('Connected to Database')
         const db = client.db('tomaho-test')
-        // const tomahoCollection = db.collection('tomaho')
 
         //port app
         app.listen(port, () => {
             console.log(`App listening on port ${port}`)
         })
 
-        //get course
-        app.get('/courses', (req, res) => {
-            db.collection('tomaho').find().toArray()
+        //get product
+        app.get('/products', (req, res) => {
+            const data = db.collection("tomaho")
+
+
+            //get all product
+            data.find().toArray()
                 .then(results => {
-                    res.render('course.ejs', { courses: results })
+                    res.render('product.ejs', { products: results })
                 })
                 .catch(error => console.error(error))
         })
+
+        app.get('/products/sort', (req, res) => {
+            const data = db.collection("tomaho")
+            //sort product
+            if (req.query.hasOwnProperty('_sort')) {
+                let type;
+                const extype = req.query.type
+
+                if (extype == 'asc') {
+                    type = 1
+                } else {
+                    type = -1
+                }
+
+                const mysort =
+                {
+                    [req.query.column]: type
+                }
+
+                data.find().sort(mysort).toArray()
+                    .then(results => {
+                        res.render('product.ejs', { products: results })
+                    })
+                    .catch(error => console.error(error))
+            }
+
+        })
+
         //update dislay data edit
-        app.get('/courses/:id/edit', (req, res) => {
+        app.get('/products/:id/edit', (req, res) => {
             const id = req.params.id
             db.collection('tomaho').findOne({ '_id': objectId(id) })
                 .then(results => {
-                    res.render('edit.ejs', { course: results })
+                    res.render('edit.ejs', { product: results })
                 })
                 .catch(error => console.error(error))
-            // const item = {
-            //     name: req.body.name,
-            //     description: req.body.description,
-            // }
-
-            // db.collection("tomaho").updateOne({ '_id': objectId(id) }, { $set: item }, function (err, res) {
-            //     if (err) throw err;
-            //     console.log("1 document updated");
-            // });
         })
+
         //update
-        app.put('/courses/:id', (req, res) => {
+        app.put('/products/:id', (req, res) => {
             const id = req.params.id
             const item = {
                 name: req.body.name,
                 description: req.body.description,
+                price: req.body.price,
             }
             db.collection("tomaho").updateOne({ '_id': objectId(id) }, { $set: item }, function (err, res) {
                 if (err) throw err;
                 console.log("1 document updated");
             });
-            res.redirect('/courses')
+            res.redirect('/products')
         })
 
-        //create course
+        //create product
         app.post('/creates', (req, res) => {
             const data = req.body
             console.log(data)
@@ -104,19 +139,19 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
                 //neu khong co loi
                 console.log('Them thanh cong');
             });
-            res.redirect('/courses')
+            res.redirect('/products')
         });
 
         //delete
-        app.delete('/courss/:id', (req, res) => {
+        app.delete('/products/:id', (req, res) => {
+            const id = req.params.id
             db.collection("tomaho").deleteOne({ '_id': objectId(id) }, function (err, obj) {
+                console.log('>>>>>>>>>>>>', objectId(id))
                 if (err) throw err;
                 console.log("1 document deleted");
-                res.redirect('/courses')
+                res.redirect('back')
             });
-            // backURL = req.header('Referer') || '/';
         });
-
 
     })
     .catch(error => console.error(error))

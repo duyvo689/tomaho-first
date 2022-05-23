@@ -1,11 +1,26 @@
-<body>
-    <%id=course._id%>
-        <form method="post" action="/courses/<%=id%>?_method=put">
-            <h2>Form update</h2>
-            <label for="">Name</label>
-            <input value=" <%=course.name%>" type="text" name="name">
-            <label for="">Description</label>
-            <input value=" <%=course.description%>" type="text" name="description">
-            <button type="submit" id="">Submit</button>
-        </form>
-</body>
+<%- include('./header')-%>
+
+    <div class="container ">
+        <h3 class="mt-4" style="text-align: center;">Edit product</h3>
+        <%id=product._id%>
+            <form class="ml-5 mr-5" method="post" action="/products/<%=id%>?_method=put">
+                <div class="form-group mt-3">
+                    <label for="exampleInputEmail1">Name</label>
+                    <input value=" <%=product.name%>" type="text" class="form-control" id="exampleInputEmail1"
+                        aria-describedby="emailHelp" name="name" placeholder="Name">
+                    <small id="emailHelp" class="form-text text-muted"></small>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="exampleInputPassword1">Description</label>
+                    <input value=" <%=product.description%>" type="text" class="form-control" id="exampleInputPassword1"
+                        name="description" placeholder="Description">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="exampleInputPassword1">Price</label>
+                    <input value=" <%=product.price%>" type="text" class="form-control" id="exampleInput" name="price"
+                        placeholder="VND">
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Save</button>
+            </form>
+    </div>
