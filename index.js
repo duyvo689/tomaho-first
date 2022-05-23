@@ -67,6 +67,18 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
         //get product
         app.get('/products', (req, res) => {
             const data = db.collection("tomaho")
+            if (req.query.hasOwnProperty('name')) {
+                const name = req.query.name;
+                data
+                    .find({ 'name': name })
+                    .toArray()
+                    .then(results => {
+                        res.render('product.ejs', { products: results })
+                        console.log('>>>>>>>>>>>>>.', results)
+                    })
+                    .catch(error => console.error(error))
+            }
+
             data.find().toArray()
                 .then(results => {
                     res.render('product.ejs', { products: results })
@@ -169,6 +181,17 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
                         });
                     })
                 })
+        })
+
+        //search
+        app.get('/search', function (req, res) {
+            var title = req.query.title;
+            var data = posts.filter(function (item) {
+                return item.title.toLowerCase().indexOf(title.toLowerCase()) !== -1
+            });
+            res.render('product.ejs', {
+                products: data
+            });
         })
 
     })
