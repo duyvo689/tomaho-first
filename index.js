@@ -67,9 +67,6 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
         //get product
         app.get('/products', (req, res) => {
             const data = db.collection("tomaho")
-
-
-            //get all product
             data.find().toArray()
                 .then(results => {
                     res.render('product.ejs', { products: results })
@@ -139,7 +136,7 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
                 //neu khong co loi
                 console.log('Them thanh cong');
             });
-            res.redirect('/products')
+            res.redirect('back')
         });
 
         //delete
@@ -152,6 +149,27 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
                 res.redirect('back')
             });
         });
+
+        //pagination
+        app.get('/pagination/:page', (req, res, next) => {
+            let perPage = 2;
+            let page = req.params.page || 1;
+            const Product = db.collection("tomaho")
+            Product
+                .find()
+                .skip((perPage * page) - perPage)
+                .limit(perPage)
+                .toArray((err, results) => {
+                    Product.countDocuments((err, count) => {
+                        if (err) return next(err);
+                        res.render('pagination.ejs', {
+                            products: results,
+                            current: page,
+                            pages: Math.ceil(count / perPage)
+                        });
+                    })
+                })
+        })
 
     })
     .catch(error => console.error(error))
