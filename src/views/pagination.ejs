@@ -3,7 +3,7 @@
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-        <link rel="stylesheet" href="../../public/icon/open-iconic-master/font/css/open-iconic-bootstrap.css">
+        <link rel="stylesheet" href="../../public/open-iconic-master/font/css/open-iconic-bootstrap.css">
 
     </head>
     <div class="container">
@@ -14,13 +14,13 @@
             <thead>
                 <tr>
                     <th scope="col">STT </th>
-                    <th scope="col">Name <%-sortable('name',_sort) %>
+                    <th scope="col">Name %>
                     </th>
-                    <th scope="col">Description <%-sortable('description',_sort) %>
+                    <th scope="col">Description %>
                     </th>
-                    <th scope="col">Price <%-sortable('price',_sort) %>
+                    <th scope="col">Price %>
                     </th>
-                    <th scope="col"></th>
+                    <th scope="col" style="text-align: center;">Edit/Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,15 +38,18 @@
                         <th scope="row">
                             <%= products[i].price %>
                         </th>
-                        <td colspan="1">
+                        <td colspan="1" style="text-align: center;">
                             <!-- <%products[i]._id%> -->
                             <a href='/products/<%=products[i]._id%>/edit'
-                                style="background-color: rgb(242, 216, 64); border-radius: 2px; cursor: pointer;">
-                                Sửa</a>
+                                style="color: green; border-radius: 2px; cursor: pointer;">
+                                <span class="oi oi-pencil"></span>
+                            </a>
+                            &nbsp;&nbsp;
                             &nbsp;&nbsp;
                             <a href='' data-toggle="modal" data-target="#delete-product-modal"
-                                data-id="<%=products[i]._id%>"
-                                style="background-color: rgb(237, 138, 129); border-radius: 2px; cursor: pointer;">Xoá</a>
+                                data-id="<%=products[i]._id%>" style="color: red; border-radius: 2px; cursor: pointer;">
+                                <span class="oi oi-trash"></span>
+                            </a>
                         </td>
                     </tr>
                     <% } %>
@@ -86,17 +89,17 @@
             <!-- hiển thị phân trang nếu có trang -->
             <% if(pages> 0) { %>
                 <nav class="mx-auto">
-                    <ul class="pagination" style="margin-top: 2rem; display: flex;
+                    <ul class="pagination " style="margin-top: 2rem; display: flex;
                     justify-content: center;">
 
                         <!-- FIRST ITEM -->
                         <% if(current==1) { %>
-                            <li class="page-item disabled">
+                            <li class="page-item disabled ">
                                 <a class="page-link" href="/">First</a>
                             </li>
                             <% } else { %>
                                 <li class="page-item">
-                                    <a class="page-link" href="/">First</a>
+                                    <a class="page-link" href="/pagination/1">First</a>
                                 </li>
                                 <% } %>
 

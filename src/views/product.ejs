@@ -14,13 +14,13 @@
             <thead>
                 <tr>
                     <th scope="col">STT</th>
-                    <th scope="col">Name <%-sortable('name',_sort) %>
+                    <th scope="col">Name &nbsp;&nbsp; <%-sortable('name',_sort) %>
                     </th>
-                    <th scope="col">Description <%-sortable('description',_sort) %>
+                    <th scope="col">Description &nbsp;&nbsp; <%-sortable('description',_sort) %>
                     </th>
-                    <th scope="col">Price <%-sortable('price',_sort) %>
+                    <th scope="col">Price &nbsp;&nbsp; <%-sortable('price',_sort) %>
                     </th>
-                    <th scope="col"></th>
+                    <th scope="col" style="text-align: center;">Edit/Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,20 +38,25 @@
                         <th scope="row">
                             <%= products[i].price %>
                         </th>
-                        <td colspan="1">
+                        <td colspan="1" style="text-align: center;">
                             <!-- <%products[i]._id%> -->
                             <a href='/products/<%=products[i]._id%>/edit'
-                                style="background-color: rgb(242, 216, 64); border-radius: 2px; cursor: pointer;">
-                                Sửa</a>
+                                style="color: green; border-radius: 2px; cursor: pointer;">
+                                <span class="oi oi-pencil"></span>
+                            </a>
+                            &nbsp;&nbsp;
                             &nbsp;&nbsp;
                             <a href='' data-toggle="modal" data-target="#delete-product-modal"
-                                data-id="<%=products[i]._id%>"
-                                style="background-color: rgb(237, 138, 129); border-radius: 2px; cursor: pointer;">Xoá</a>
+                                data-id="<%=products[i]._id%>" style="color: red; border-radius: 2px; cursor: pointer;">
+                                <span class="oi oi-trash"></span>
+                            </a>
                         </td>
                     </tr>
                     <% } %>
             </tbody>
         </table>
+
+
 
 
 

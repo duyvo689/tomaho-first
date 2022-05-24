@@ -4,11 +4,10 @@ const path = require('path')
 const morgan = require('morgan')
 const MongoClient = require('mongodb').MongoClient
 const objectId = require('mongodb').ObjectId
-const product = require('./src/models/product')
-const router = require('./src/route/web')
+const router = require('./src/route')
 const methodOverride = require('method-override')
 const sortMiddlewares = require('./src/middlewares/sortMiddlewares')
-
+// const route = require('./src/route/index')
 
 app.set('views', path.join(__dirname, 'src/views'))
 app.set("view engine", "ejs");
@@ -19,8 +18,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use('/public', express.static('public'))
 app.use(sortMiddlewares)
-// app.use('/', router)
 
+//url database
+const url = 'mongodb://localhost:27017'
 
 //funtion helper engine
 //column type sort
@@ -52,9 +52,10 @@ app.get('/creates', (req, res) => {
     res.render('create.ejs')
 })
 
+//port
 const port = 3000;
 
-MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
+MongoClient.connect(url, { useUnifiedTopology: true })
     .then(client => {
         console.log('Connected to Database')
         const db = client.db('tomaho-test')
@@ -64,11 +65,11 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
             console.log(`App listening on port ${port}`)
         })
 
-        //get product
+        // get product
         app.get('/products', (req, res) => {
             const data = db.collection("tomaho")
             if (req.query.hasOwnProperty('name')) {
-                const name = req.query.name;
+                const name = req.query.name
                 data
                     .find({ 'name': name })
                     .toArray()
@@ -85,6 +86,7 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
                 })
                 .catch(error => console.error(error))
         })
+
 
         app.get('/products/sort', (req, res) => {
             const data = db.collection("tomaho")
@@ -126,10 +128,11 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
         //update
         app.put('/products/:id', (req, res) => {
             const id = req.params.id
+            const data = req.body
             const item = {
-                name: req.body.name,
-                description: req.body.description,
-                price: req.body.price,
+                name: data.name,
+                description: data.description,
+                price: parseInt(data.price)
             }
             db.collection("tomaho").updateOne({ '_id': objectId(id) }, { $set: item }, function (err, res) {
                 if (err) throw err;
@@ -141,8 +144,12 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
         //create product
         app.post('/creates', (req, res) => {
             const data = req.body
-            console.log(data)
-            db.collection('tomaho').insertOne(data, function (err, res) {
+            const item = {
+                name: data.name,
+                description: data.description,
+                price: parseInt(data.price)
+            }
+            db.collection('tomaho').insertOne(item, function (err, res) {
                 //neu xay ra loi
                 if (err) throw err;
                 //neu khong co loi
@@ -164,7 +171,7 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
 
         //pagination
         app.get('/pagination/:page', (req, res, next) => {
-            let perPage = 2;
+            let perPage = 5;
             let page = req.params.page || 1;
             const Product = db.collection("tomaho")
             Product
@@ -193,6 +200,7 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true })
                 products: data
             });
         })
+
 
     })
     .catch(error => console.error(error))
